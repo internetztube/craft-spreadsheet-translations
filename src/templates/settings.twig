@@ -1,0 +1,30 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+
+{% import "_includes/forms" as forms %}
+
+{{ forms.textareaField({
+    label: 'Contents of the access key file',
+    instructions: '',
+    id: 'keyFileContents',
+    name: 'keyFileContents',
+    value: settings['keyFileContents'],
+    rows: 8,
+    cols: 50,
+}) }}
+
+
+{{ forms.textField({
+    label: 'Spread Sheet Id',
+    instructions: '',
+    id: 'spreadSheetId',
+    name: 'spreadSheetId',
+    value: settings['spreadSheetId'],
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Is push to Spreadsheet enabled?',
+    instructions: 'A `_new` sheet must be present!',
+    id: 'isPushEnabled',
+    name: 'isPushEnabled',
+    on: settings['isPushEnabled'],
+}) }}
