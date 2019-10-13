@@ -13,14 +13,9 @@ class FetchController extends Controller
 {
     public function actionIndex()
     {
-        $result = SpreadsheetTranslations::$plugin->googleSpreadsheets->fetchNewTranslations();
-        $this->stdout(sprintf("found %d languages\n", count($result->languages)));
-        foreach ($result->languages as $language) {
-            $this->stdout(sprintf("  %s\n", $language));
-        }
-        $this->stdout(sprintf("found %d translation handles\n", count($result->handles)));
-        foreach ($result->handles as $handle) {
-            $this->stdout(sprintf("  %s\n", $handle));
-        }
+        $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
+        $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
+        SpreadsheetTranslations::$plugin->writeTranslationsToDisk->persist($translations);
+        $this->stdout(sprintf("Saved %d translations to disk.\n", count($translations)));
     }
 }

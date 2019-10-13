@@ -12,14 +12,12 @@ class Settings extends Model
 {
     public $keyFileContents = '';
     public $spreadSheetId = '';
-    public $isPushEnabled = false;
 
     public function rules()
     {
         return [
             ['keyFileContents', 'string'],
             ['spreadSheetId', 'string'],
-            ['isPushEnabled', 'boolean'],
         ];
     }
 }

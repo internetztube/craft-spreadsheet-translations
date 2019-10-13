@@ -10,6 +10,16 @@
 
 namespace internetztube\spreadsheetTranslations;
 
+use craft\events\RegisterUrlRulesEvent;
+use craft\events\SiteEvent;
+use craft\services\Sites;
+use craft\web\UrlManager;
+use internetztube\spreadsheetTranslations\services\FetchService;
+use internetztube\spreadsheetTranslations\services\MissingHandleService;
+use internetztube\spreadsheetTranslations\services\MissingLanguagesService;
+use internetztube\spreadsheetTranslations\services\TemplateTranslationService;
+use internetztube\spreadsheetTranslations\services\WriteService;
+use internetztube\spreadsheetTranslations\services\WriteTranslationsToDiskService;
 use internetztube\spreadsheetTranslations\twig;
 use internetztube\spreadsheetTranslations\models\Settings;
 
@@ -19,7 +29,12 @@ use craft\services\Plugins;
 use craft\events\PluginEvent;
 
 use internetztube\spreadsheetTranslations\twigextensions\SpreadsheetTranslationsTwigExtension;
+use Twig\Loader\FilesystemLoader;
 use yii\base\Event;
+use PhpParser\Error;
+use PhpParser\NodeDumper;
+use PhpParser\ParserFactory;
+
 
 /**
  * Class SpreadsheetTranslations
@@ -39,18 +54,29 @@ class SpreadsheetTranslations extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        Craft::$app->view->registerTwigExtension(new SpreadsheetTranslationsTwigExtension());
-
         // Add in our console commands
         if (Craft::$app instanceof ConsoleApplication) {
             $this->controllerNamespace = 'internetztube\spreadsheetTranslations\console\controllers';
         }
 
         $this->setComponents([
-            'googleSpreadsheets' => GoogleSpreadsheetsService::class,
+            'fetch' => FetchService::class,
+            'missingLanguages' => MissingLanguagesService::class,
+            'templateTranslation' => TemplateTranslationService::class,
+            'writeTranslationsToDisk' => WriteTranslationsToDiskService::class,
+            'missingHandle' => MissingHandleService::class,
         ]);
 
-        self::$plugin->googleSpreadsheets->init();
+        Event::on(Sites::class, Sites::EVENT_AFTER_SAVE_SITE, function(SiteEvent $siteEvent) {
+            $this->missingLanguages->addMissingLanguages();
+        });
+
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function (RegisterUrlRulesEvent $event) {
+            $event->rules = array_merge(
+                $event->rules,
+                include __DIR__ . '/cpRoutes.php',
+            );
+        });
     }
 
     protected function createSettingsModel()

@@ -10,6 +10,8 @@
     value: settings['keyFileContents'],
     rows: 8,
     cols: 50,
+    wrap: 'soft',
+    class: 'code',
 }) }}
 
 
@@ -19,12 +21,32 @@
     id: 'spreadSheetId',
     name: 'spreadSheetId',
     value: settings['spreadSheetId'],
+    class: 'code',
 }) }}
 
-{{ forms.lightswitchField({
-    label: 'Is push to Spreadsheet enabled?',
-    instructions: 'A `_new` sheet must be present!',
-    id: 'isPushEnabled',
-    name: 'isPushEnabled',
-    on: settings['isPushEnabled'],
-}) }}
+
+<input type="button" class="btn js-test-config" value="{{ 'Test credentials' }}">
+<div class="js-test-config-result"></div>
+
+
+{% js %}
+    const $testConfigbutton = document.querySelector('.js-test-config');
+    $testConfigbutton.addEventListener('click', async (event) => {
+        const $testResultConfig = document.querySelector('.js-test-config-result');
+        $testResultConfig.innerHTML = '';
+        const formData = new FormData();
+        formData.append('keyFileContents', document.querySelector('#settings-keyFileContents').value);
+        formData.append('spreadsheetId', document.querySelector('#settings-spreadSheetId').value);
+
+        const fetchResponse = await fetch(`/admin/spreadsheet-translations/settings/test-config`, {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await fetchResponse.json();
+        if (data.success) {
+            $testResultConfig.innerText = "Success!";
+        } else {
+            $testResultConfig.innerHTML = "Error! <br />" + data.message + "<br />" + "Class: " + data.exception_class;
+        }
+    });
+{% endjs %}

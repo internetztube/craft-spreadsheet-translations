@@ -58,6 +58,7 @@ class SpreadsheetTranslationsTwigExtension extends \Twig_Extension
         }
 
         try {
+            return \Craft::t($category, (string)$message, $params, $language);
             return SpreadsheetTranslations::$plugin->googleSpreadsheets->translate($category, (string)$message, $params, $language);
         } catch (InvalidConfigException $e) {
             return $message;
