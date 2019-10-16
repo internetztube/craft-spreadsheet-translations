@@ -8,7 +8,7 @@ use internetztube\spreadsheetTranslations\services\BaseSpreadsheetService;
 
 class MissingLanguagesService extends BaseSpreadsheetService
 {
-    public function addMissingLanguages()
+    public function addMissingLanguages(): array
     {
         $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
         $missingLanguages = $this->missingLanguages($rawRows);

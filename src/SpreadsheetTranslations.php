@@ -10,9 +10,11 @@
 
 namespace internetztube\spreadsheetTranslations;
 
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\SiteEvent;
 use craft\services\Sites;
+use craft\services\Utilities;
 use craft\web\UrlManager;
 use internetztube\spreadsheetTranslations\services\FetchService;
 use internetztube\spreadsheetTranslations\services\MissingHandleService;
@@ -20,7 +22,6 @@ use internetztube\spreadsheetTranslations\services\MissingLanguagesService;
 use internetztube\spreadsheetTranslations\services\TemplateTranslationService;
 use internetztube\spreadsheetTranslations\services\WriteService;
 use internetztube\spreadsheetTranslations\services\WriteTranslationsToDiskService;
-use internetztube\spreadsheetTranslations\twig;
 use internetztube\spreadsheetTranslations\models\Settings;
 
 use Craft;
@@ -28,7 +29,7 @@ use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
 
-use internetztube\spreadsheetTranslations\twigextensions\SpreadsheetTranslationsTwigExtension;
+use internetztube\spreadsheetTranslations\utilities\SpreadsheetTranslationsUtility;
 use Twig\Loader\FilesystemLoader;
 use yii\base\Event;
 use PhpParser\Error;
@@ -66,6 +67,12 @@ class SpreadsheetTranslations extends Plugin
             'writeTranslationsToDisk' => WriteTranslationsToDiskService::class,
             'missingHandle' => MissingHandleService::class,
         ]);
+
+        // Register our utilities
+        Event::on(Utilities::class, Utilities::EVENT_REGISTER_UTILITY_TYPES, function (RegisterComponentTypesEvent $event) {
+            $event->types[] = SpreadsheetTranslationsUtility::class;
+        });
+
 
         Event::on(Sites::class, Sites::EVENT_AFTER_SAVE_SITE, function(SiteEvent $siteEvent) {
             $this->missingLanguages->addMissingLanguages();

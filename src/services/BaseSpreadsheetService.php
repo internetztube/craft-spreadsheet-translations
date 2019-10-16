@@ -68,7 +68,6 @@ abstract class BaseSpreadsheetService extends Component
     public function rangeNumberToLetters(int $number): string
     {
         if ($number <= 0) return null;
-        $temp;
         $letter = '';
         while ($number > 0) {
             $temp = ($number - 1) % 26;

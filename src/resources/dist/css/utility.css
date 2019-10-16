@@ -1,0 +1,16 @@
+.spreadsheet-translations-utility-status {
+  opacity: 1;
+}
+
+.spreadsheet-translations-utility-status * {
+  transition: opacity 0.5s;
+}
+
+.spreadsheet-translations-utility-status > * {
+  opacity: 0;
+}
+
+.spreadsheet-translations-utility-status > *.active {
+  opacity: 1 !important;
+}
+

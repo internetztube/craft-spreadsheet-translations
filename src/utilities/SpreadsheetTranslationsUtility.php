@@ -2,42 +2,42 @@
 
 namespace internetztube\spreadsheetTranslations\utilities;
 
+use internetztube\spreadsheetTranslations\assetbundles\UtilityAsset;
+use Craft;
 use craft\base\Utility;
 
 class SpreadsheetTranslationsUtility extends Utility
 {
-    // Static
-    // =========================================================================
-
-    /**
-     * @inheritdoc
-     */
     public static function displayName(): string
     {
         return 'Spreadsheet Translations';
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function id(): string
     {
         return 'spreadsheet-translations';
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function iconPath()
     {
-        return Craft::getAlias('@app/icons/photo.svg');
+        return Craft::getAlias("@internetztube/spreadsheetTranslations/resources/dist/img/utility-icon.svg");
     }
 
-    /**
-     * @inheritdoc
-     */
+    public static function badgeCount(): int
+    {
+        return 0;
+    }
+
     public static function contentHtml(): string
     {
-        return $view->renderTemplate('_components/utilities/SpreadsheetTranslations');
+        Craft::$app->getView()->registerAssetBundle(UtilityAsset::class);
+
+        $someVar = 'Have a nice day!';
+        return Craft::$app->getView()->renderTemplate(
+            'spreadsheet-translations/_utility',
+            [
+                'someVar' => $someVar
+            ]
+        );
     }
 }
