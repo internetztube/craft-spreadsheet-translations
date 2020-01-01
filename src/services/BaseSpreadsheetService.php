@@ -3,6 +3,7 @@
 namespace internetztube\spreadsheetTranslations\services;
 
 use craft\base\Component;
+use craft\helpers\StringHelper;
 use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
 use Google_Service_Sheets_BatchUpdateSpreadsheetRequest;
 
@@ -35,7 +36,7 @@ abstract class BaseSpreadsheetService extends Component
     {
         if ($this->sheetContentTabName) return $this->sheetContentTabName;
         $settings = SpreadsheetTranslations::$plugin->getSettings();
-        return $settings->sheetContentTabName;
+        return StringHelper::slugify($settings->sheetContentTabName);
     }
 
     /**

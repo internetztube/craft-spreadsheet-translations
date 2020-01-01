@@ -4,6 +4,13 @@ This plugin enables non-developers to access static translations via a Google sp
 
 ![Screenshot](src/icon.svg)
 
+## Screenshots
+![Sample Spreadsheet](screenshots/spreadsheet.png)
+![Translation Files](screenshots/translation-files.png)
+![Utilities](screenshots/utilities.png)
+![Settings](screenshots/settings.png)
+
+
 ## Requirements
 This plugin requires Craft CMS 3.1.0 or later.
 
@@ -74,7 +81,7 @@ https://docs.google.com/spreadsheets/d/<SPREADSHEET-ID>/edit
 `https://docs.google.com/spreadsheets/d/11fRj44MwhGqFGpIYHGfwpA69ed-Z657WdiXex6kvuo8/edit` -> `11fRj44MwhGqFGpIYHGfwpA69ed-Z657WdiXex6kvuo8`
 
 #### Sheet Name
-This is the name of the sheet, where the translations are stored, which should be applied for this project. All printable characters are allowed ... even emojies! 🎉
+This is the name of the sheet, where the translations are stored, which should be applied for this project. This string gets slugified. `DEV: Translations` -> `dev-translations`.
 
 ---
 Brought to you by [Frederic Köberl](https://github.com/internetztube)

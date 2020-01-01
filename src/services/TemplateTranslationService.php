@@ -24,7 +24,6 @@ class TemplateTranslationService extends BaseSpreadsheetService
         $templatePaths = $this->getTemplatePaths();
         $result = [];
         foreach ($templatePaths as $templatePath) {
-            if ($templatePath !== 'templates/index') continue;
             $translations = $this->getTranslationsFromTemplateFile($templatePath);
             $result = array_merge($result, $translations);
         }

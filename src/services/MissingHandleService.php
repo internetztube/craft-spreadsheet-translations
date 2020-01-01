@@ -11,9 +11,16 @@ class MissingHandleService extends BaseSpreadsheetService
         $this->createTranslationsSheetWhenNotPresent();
         $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
         $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
+
+        // When there are no languages present, the translation mapping breaks. So sync the translations and try again.
+        if (count($rawRows) >= 1 && count($translations) === 0) {
+            SpreadsheetTranslations::$plugin->missingLanguages->addMissingLanguages();
+            return $this->pushHandleToSpreadSheet($handles);
+        }
         $translationHandles = array_map(function($translation) {
             return $translation['handle'];
         }, $translations);
+
         $translationHandles = array_unique($translationHandles);
 
         if (!is_array($handles)) {
