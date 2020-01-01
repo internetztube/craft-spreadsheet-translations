@@ -12,20 +12,43 @@
     cols: 50,
     wrap: 'soft',
     class: 'code',
+    placeholder: '{
+  "type": "service_account",
+  "project_id": "PROJECT_ID",
+  "private_key_id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n-----END PRIVATE KEY-----\n",
+  "client_email": "XXXXXXXXXX@ACCOUNT_HANDLE.iam.gserviceaccount.com",
+  "client_id": "XXXXXXXXXXXXXXXXXXXXX",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/XXXXXXXXXXXXXXXXXXXXX"
+}'
+}) }}
+
+{{ forms.textField({
+    label: 'Sheet Name where the Translations are located',
+    instructions: '',
+    id: 'sheetContentTabName',
+    name: 'sheetContentTabName',
+    value: settings['sheetContentTabName'],
+    class: 'code',
+    placeholder: 'Translations'
 }) }}
 
 
 {{ forms.textField({
-    label: 'Spread Sheet Id',
+    label: 'Spreadsheet Id',
     instructions: '',
     id: 'spreadSheetId',
     name: 'spreadSheetId',
     value: settings['spreadSheetId'],
     class: 'code',
+    placeholder: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX',
 }) }}
 
-<div class="btn js-test-config-button">{{ 'Test credentials' }}</div>
+<div class="btn js-test-config-button">{{ 'Test credentials' t('spreadsheet-translations') }}</div>
 <span id="graphic" class="spinner hidden js-test-config-spinner"></span>
 <p class="js-test-config-result"></p>
 
-{% do view.registerAssetBundle('internetztube\\spreadsheetTranslations\\assetbundles\\SettingsAssetBundle') -%}
+{% do view.registerAssetBundle('internetztube\\spreadsheetTranslations\\assetbundles\\SettingsAssetBundle') %}

@@ -12,6 +12,10 @@ class TemplateTranslationService extends BaseSpreadsheetService
     private const DELIMITER_START = '$this->extensions[\'craft\web\twig\Extension\']->translateFilter("';
     private const DELIMITER_END = '"';
 
+    /**
+     * Entry point for extracting all translations from all templates.
+     * @return array
+     */
     public function getTranslationsFromTemplates()
     {
         $originalTemplatesPath = \Craft::$app->view->getTemplatesPath();
@@ -20,6 +24,7 @@ class TemplateTranslationService extends BaseSpreadsheetService
         $templatePaths = $this->getTemplatePaths();
         $result = [];
         foreach ($templatePaths as $templatePath) {
+            if ($templatePath !== 'templates/index') continue;
             $translations = $this->getTranslationsFromTemplateFile($templatePath);
             $result = array_merge($result, $translations);
         }
@@ -30,6 +35,11 @@ class TemplateTranslationService extends BaseSpreadsheetService
         return $result;
     }
 
+    /**
+     *
+     * @param string $translationPath
+     * @return array
+     */
     private function getTranslationsFromTemplateFile(string $translationPath)
     {
         try {
@@ -46,11 +56,16 @@ class TemplateTranslationService extends BaseSpreadsheetService
     {
         $result = explode(self::DELIMITER_START, $document);
         array_shift($result);
-        return array_map(function($item) {
+        $result = array_map(function($item) {
             return explode(self::DELIMITER_END, $item)[0];
         }, $result);
+        return $result;
     }
 
+    /**
+     * Returns all template file paths relative to the `templates/` folder.
+     * @return array
+     */
     private function getTemplatePaths()
     {
         $templatesPath = $this->templatesPath();
@@ -59,10 +74,12 @@ class TemplateTranslationService extends BaseSpreadsheetService
             $extension = pathInfo($item, PATHINFO_EXTENSION);
             return in_array($extension, self::SUPPORTED_TEMPLATE_EXTENSIONS);
         });
-        return array_map(function($item) use ($templatesPath) {
+        $result = array_map(function($item) use ($templatesPath) {
             $info = pathInfo($item);
             return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'];
         }, $result);
+        $result = array_unique($result);
+        return $result;
     }
 
     // Thanks! https://stackoverflow.com/a/46697247/2421121

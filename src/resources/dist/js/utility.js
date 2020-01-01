@@ -895,9 +895,7 @@ var init = function init() {
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return fetch("/admin/spreadsheet-translations/utilities/pull-translations", {
-                method: 'POST'
-              });
+              return fetch("/admin/spreadsheet-translations/utilities/pull-translations");
 
             case 2:
               done();
@@ -956,9 +954,7 @@ var init = function init() {
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return fetch("/admin/spreadsheet-translations/utilities/push-handles", {
-                method: 'POST'
-              });
+              return fetch("/admin/spreadsheet-translations/utilities/push-handles");
 
             case 2:
               done();
@@ -1017,9 +1013,7 @@ var init = function init() {
           switch (_context.prev = _context.next) {
             case 0:
               _context.next = 2;
-              return fetch("/admin/spreadsheet-translations/utilities/push-languages", {
-                method: 'POST'
-              });
+              return fetch("/admin/spreadsheet-translations/utilities/push-languages");
 
             case 2:
               done();

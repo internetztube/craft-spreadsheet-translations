@@ -29,7 +29,7 @@ class SettingsController extends Controller
         ];
         try {
             SpreadsheetTranslations::$plugin->fetch->getGoogleSheetsService(true);
-            $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
+            SpreadsheetTranslations::$plugin->fetch->rawRows();
         } catch (\Exception $e) {
             $data['message'] = $e->getMessage();
             $data['exception_class'] = get_class($e);

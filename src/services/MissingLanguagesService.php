@@ -4,12 +4,17 @@ namespace internetztube\spreadsheetTranslations\services;
 
 use craft\models\Site;
 use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
-use internetztube\spreadsheetTranslations\services\BaseSpreadsheetService;
 
 class MissingLanguagesService extends BaseSpreadsheetService
 {
+    /**
+     * Pushes all missing languages to the spreadsheet.
+     * @return array
+     * @throws \Google_Exception
+     */
     public function addMissingLanguages(): array
     {
+        $this->createTranslationsSheetWhenNotPresent();
         $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
         $missingLanguages = $this->missingLanguages($rawRows);
         if (count($missingLanguages) <= 0) return [];
@@ -20,7 +25,7 @@ class MissingLanguagesService extends BaseSpreadsheetService
             $languageRow = array_shift($rawRows);
             $startColumn = count($languageRow)+1;
             $startColumn = $startColumn <= 1 ? 2 : $startColumn;
-            $range = $this->buildRangeString($this->getSpreadSheetContentTabName(), $startColumn, 1, count($missingLanguages)+count($languageRow), 1);
+            $range = $this->buildRangeString($this->getSpreadSheetContentTabName(), $startColumn, 1, count($missingLanguages)+count($languageRow)+1, 1);
         }
 
         $spreadSheetService = $this->getGoogleSheetsService();
@@ -34,13 +39,18 @@ class MissingLanguagesService extends BaseSpreadsheetService
         return $missingLanguages;
     }
 
+    /**
+     * Returns all languages that are not already in the spreadsheet.
+     * @param array $rawRows
+     * @return array
+     * @throws \Google_Exception
+     */
     private function missingLanguages(array $rawRows)
     {
         $missingLanguages = [];
-        $langauges = SpreadsheetTranslations::$plugin->fetch->languages($rawRows);
+        $languages = SpreadsheetTranslations::$plugin->fetch->languages($rawRows);
         $contentRange = $this->getContentRange();
         if (!$contentRange) return [];
-        $columnsCount = $contentRange->sheetColumns;
 
         $craftSitesLanguages = array_map(function(Site $site) {
             return $site->language;
@@ -48,7 +58,7 @@ class MissingLanguagesService extends BaseSpreadsheetService
         $craftSitesLanguages = array_unique($craftSitesLanguages);
 
         foreach ($craftSitesLanguages as $craftSitesLanguage) {
-            if (in_array($craftSitesLanguage, $langauges)) continue;
+            if (in_array($craftSitesLanguage, $languages)) continue;
             $missingLanguages[] = $craftSitesLanguage;
         }
         return $missingLanguages;

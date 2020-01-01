@@ -2,17 +2,22 @@
 
 namespace internetztube\spreadsheetTranslations\services;
 
-
-
-use craft\base\Component;
 use craft\models\Site;
-use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
-use internetztube\spreadsheetTranslations\services\BaseSpreadsheetService;
-use internetztube\spreadsheetTranslations\utilities\GoogleSpreadsheetUtility;
-use internetztube\spreadsheetTranslations\utilities\SpreadsheetUtility;
 
 class FetchService extends BaseSpreadsheetService
 {
+    public function checkCredentials(): bool
+    {
+        try {
+            $this->getGoogleSheetsService(true);
+            $this->rawRows();
+        } catch (\Exception $exception) {
+            throw $exception;
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Returns all languages which are also avalible in Craft.
      * @param array $rawRows
@@ -22,8 +27,7 @@ class FetchService extends BaseSpreadsheetService
     {
         if (count($rawRows) <= 0) return [];
         $sheetLanguages = $rawRows[0];
-        // the first cell of the sheet (A1:A1) MUST be empty!
-        if (array_shift($sheetLanguages) !== '') return [];
+        array_shift($sheetLanguages);
 
         $craftLanguages = array_map(function(Site $site) {
             return $site->language;
@@ -73,7 +77,19 @@ class FetchService extends BaseSpreadsheetService
             ->spreadsheets_values
             ->get($this->getSpreadSheetId(), $range)
             ->getValues();
+
         if (!$result) return [];
         return $result;
+    }
+
+    public function getSheetId()
+    {
+        $sheets = $this->getApiSheets();
+        foreach ($sheets as $sheet) {
+            if (strcmp($this->getSpreadSheetContentTabName(), $sheet->properties->title) === 0) {
+                return $sheet->properties->sheetId;
+            }
+        }
+        return null;
     }
 }

@@ -8,6 +8,7 @@ class MissingHandleService extends BaseSpreadsheetService
 {
     public function pushHandleToSpreadSheet($handles)
     {
+        $this->createTranslationsSheetWhenNotPresent();
         $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
         $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
         $translationHandles = array_map(function($translation) {

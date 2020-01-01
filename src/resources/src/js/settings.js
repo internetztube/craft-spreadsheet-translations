@@ -2,6 +2,7 @@ const testConfigResult = async() => {
   const formData = new FormData();
   formData.append('keyFileContents', document.querySelector('#settings-keyFileContents').value);
   formData.append('spreadsheetId', document.querySelector('#settings-spreadSheetId').value);
+  formData.append('sheetName', document.querySelector('#settings-sheetContentTabName').value);
 
   const fetchResponse = await fetch(`/admin/spreadsheet-translations/settings/test-config`, {
     method: 'POST',

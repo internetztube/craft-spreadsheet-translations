@@ -1,30 +1,18 @@
 <?php
-/**
- * Spreadsheet Translations plugin for Craft CMS 3.x
- *
- * Adds support for dynamic translations from Google Spreadsheets.
- *
- * @link      https://github.com/internetztube
- * @copyright Copyright (c) 2019 Frederic Köberl
- */
-
-/**
- * Spreadsheet Translations config.php
- *
- * This file exists only as a template for the Spreadsheet Translations settings.
- * It does nothing on its own.
- *
- * Don't edit this file, instead copy it to 'craft/config' as 'spreadsheet-translations.php'
- * and make your changes there to override default settings.
- *
- * Once copied to 'craft/config', this file will be multi-environment aware as
- * well, so you can have different settings groups for each environment, just as
- * you do for 'general.php'
- */
 
 return [
-
-    // This controls blah blah blah
-    "someAttribute" => true,
-
+    "keyFileContents" => '{
+  "type": "service_account",
+  "project_id": "PROJECT_ID",
+  "private_key_id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n-----END PRIVATE KEY-----\n",
+  "client_email": "XXXXXXXXXX@ACCOUNT_HANDLE.iam.gserviceaccount.com",
+  "client_id": "XXXXXXXXXXXXXXXXXXXXX",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/XXXXXXXXXXXXXXXXXXXXX"
+}',
+    'spreadSheetId' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX',
+    'sheetContentTabName' => 'Translations',
 ];

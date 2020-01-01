@@ -12,12 +12,14 @@ class Settings extends Model
 {
     public $keyFileContents = '';
     public $spreadSheetId = '';
+    public $sheetContentTabName = '';
 
     public function rules()
     {
         return [
-            ['keyFileContents', 'string'],
-            ['spreadSheetId', 'string'],
+            ['keyFileContents', 'required'],
+            ['spreadSheetId', 'required'],
+            ['sheetContentTabName', 'required'],
         ];
     }
 }

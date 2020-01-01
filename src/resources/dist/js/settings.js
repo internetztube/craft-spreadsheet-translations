@@ -866,6 +866,7 @@ function () {
             formData = new FormData();
             formData.append('keyFileContents', document.querySelector('#settings-keyFileContents').value);
             formData.append('spreadsheetId', document.querySelector('#settings-spreadSheetId').value);
+            formData.append('sheetName', document.querySelector('#settings-sheetContentTabName').value);
             _context.next = 5;
             return fetch("/admin/spreadsheet-translations/settings/test-config", {
               method: 'POST',

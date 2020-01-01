@@ -23,17 +23,37 @@ class WriteTranslationsToDiskService extends BaseSpreadsheetService
         }
     }
 
+
     private function buildFile(array $groupedTranslations)
     {
-        $result = "<?php\n\nreturn [\n";
+        $result = sprintf('<?php
+
+/**
+ * This is a auto generated file. DO NOT MODIFY!
+ * Generated at %s
+ */
+
+$data = [
+', date('c'));
+
         foreach ($groupedTranslations as $handle => $translation) {
-            $result .= sprintf("    \"%s\" => \"%s\", %s\n",
+            $result .= sprintf('%s  "%s" => "%s",
+',
+                ($translation['isEmpty'] ? '//' : '  '),
                 addslashes($handle),
-                addslashes($translation['value']),
-                ($translation['isEmpty'] ? '// value is empty' : '')
+                addslashes($translation['value'])
             );
         }
-        $result .= "];\n";
+        $result .= '];
+';
+
+        $result .= '
+$result = [];
+foreach ($data as $key => $value) {
+    $result[stripslashes($key)] = $value;
+}
+return $result;
+';
         return $result;
     }
 

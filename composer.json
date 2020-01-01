@@ -2,7 +2,7 @@
     "name": "internetztube/craft-spreadsheet-translations",
     "description": "Adds support for dynamic translations from Google Spreadsheets.",
     "type": "craft-plugin",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "keywords": [
         "craft",
         "cms",
@@ -11,18 +11,18 @@
         "spreadsheet translations"
     ],
     "support": {
-        "docs": "https://github.com/internetztube/spreadsheet-translations/blob/master/README.md",
-        "issues": "https://github.com/internetztube/spreadsheet-translations/issues"
+        "docs": "https://github.com/internetztube/craft-spreadsheet-translations/blob/master/README.md",
+        "issues": "https://github.com/internetztube/craft-spreadsheet-translations/issues"
     },
     "license": "MIT",
     "authors": [
         {
             "name": "Frederic Köberl",
-            "homepage": "https://github.com/internetztube"
+            "homepage": "https://github.com/internetztube/"
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0-RC1",
+        "craftcms/cms": ">=3.1.0",
         "google/apiclient": "^2.4",
         "php": ">=7.1"
     },
@@ -30,13 +30,5 @@
         "psr-4": {
           "internetztube\\spreadsheetTranslations\\": "src/"
         }
-    },
-    "extra": {
-        "name": "Spreadsheet Translations",
-        "handle": "spreadsheet-translations",
-        "hasCpSettings": true,
-        "hasCpSection": false,
-        "changelogUrl": "https://raw.githubusercontent.com/internetztube/spreadsheet-translations/master/CHANGELOG.md",
-        "class": "internetztube\\spreadsheetTranslations\\SpreadsheetTranslations"
     }
 }

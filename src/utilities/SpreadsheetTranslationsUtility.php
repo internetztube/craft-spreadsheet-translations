@@ -10,7 +10,7 @@ class SpreadsheetTranslationsUtility extends Utility
 {
     public static function displayName(): string
     {
-        return 'Spreadsheet Translations';
+        return \Craft::t('spreadsheet-translations', 'Spreadsheet Translations');
     }
 
     public static function id(): string
@@ -20,7 +20,7 @@ class SpreadsheetTranslationsUtility extends Utility
 
     public static function iconPath()
     {
-        return Craft::getAlias("@internetztube/spreadsheetTranslations/resources/dist/img/utility-icon.svg");
+        return Craft::getAlias("@internetztube/spreadsheetTranslations/resources/dist/img/icon.svg");
     }
 
     public static function badgeCount(): int

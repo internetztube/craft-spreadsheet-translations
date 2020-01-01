@@ -4,7 +4,7 @@ namespace internetztube\spreadsheetTranslations\services;
 
 use craft\base\Component;
 use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
-use phpDocumentor\Reflection\Types\String_;
+use Google_Service_Sheets_BatchUpdateSpreadsheetRequest;
 
 abstract class BaseSpreadsheetService extends Component
 {
@@ -18,10 +18,14 @@ abstract class BaseSpreadsheetService extends Component
     private $googleSheetsService;
 
     /** @var string */
-    private const TRANSLATE_CATEGORY = 'site';
+    private $sheetContentTabName;
+
+    /** @var array */
+    private $apiSheets;
 
     /** @var string */
-    private const SPREADSHEET_CONTENT_TAB_NAME = 'Translations';
+    private const TRANSLATE_CATEGORY = 'site';
+
 
     /**
      * Returns the name of the tab in which the translations are maintained.
@@ -29,7 +33,9 @@ abstract class BaseSpreadsheetService extends Component
      */
     public function getSpreadSheetContentTabName()
     {
-        return self::SPREADSHEET_CONTENT_TAB_NAME;
+        if ($this->sheetContentTabName) return $this->sheetContentTabName;
+        $settings = SpreadsheetTranslations::$plugin->getSettings();
+        return $settings->sheetContentTabName;
     }
 
     /**
@@ -52,6 +58,10 @@ abstract class BaseSpreadsheetService extends Component
         return $basePath . '/translations';
     }
 
+    /**
+     * Directory where the templates are located.
+     * @return string
+     */
     public function templatesPath(): string
     {
         $basePath = \Craft::$app->config->getConfigFilePath('../yo');
@@ -95,9 +105,9 @@ abstract class BaseSpreadsheetService extends Component
         return (int) $column;
     }
 
-
     /**
      * Returns a Instance of \Google_Service_Sheets with a prepared client.
+     * @param bool $forceRebuild
      * @return \Google_Service_Sheets
      * @throws \Google_Exception
      */
@@ -124,9 +134,8 @@ abstract class BaseSpreadsheetService extends Component
      */
     public function getContentRange(): ?object
     {
-        $sheets = $this->getGoogleSheetsService()
-            ->spreadsheets
-            ->get($this->getSpreadSheetId());
+        $this->createTranslationsSheetWhenNotPresent();
+        $sheets = $this->getApiSheets();
 
         /** @var \Google_Service_Sheets_Sheet $sheet */
         foreach ($sheets as $sheet) {
@@ -146,7 +155,7 @@ abstract class BaseSpreadsheetService extends Component
         return null;
     }
 
-    public function buildRangeString(string $title, int $startColumn, int $startRow, int $endColumn, int $endRow)
+    public function buildRangeString(string $title, int $startColumn, int $startRow, int $endColumn, int $endRow): string
     {
         return vsprintf('%s!%s%d:%s%s', [
             $title,
@@ -166,7 +175,7 @@ abstract class BaseSpreadsheetService extends Component
      * @param $value
      * @return array
      */
-    public function fillArrayToLengthWithValue(array $input, int $length, $value)
+    public function fillArrayToLengthWithValue(array $input, int $length, $value): array
     {
         $inputLength = count($input);
         $diff = $length - $inputLength;
@@ -203,6 +212,53 @@ abstract class BaseSpreadsheetService extends Component
     public function setKeyFileContents($keyFileContents)
     {
         $this->keyFileContents = $keyFileContents;
+    }
+
+    /**
+     * Raw sheets from the corresponding spreadsheet.
+     * @return array|\Google_Service_Sheets_Spreadsheet
+     * @throws \Google_Exception
+     */
+    protected function getApiSheets()
+    {
+        if ($this->apiSheets) return $this->apiSheets;
+        $this->apiSheets = $this->getGoogleSheetsService()
+            ->spreadsheets
+            ->get($this->getSpreadSheetId());
+        return $this->apiSheets;
+    }
+
+    /**
+     * Makes sure that the "Translations" sheet exists.
+     * @throws \Google_Exception
+     */
+    protected function createTranslationsSheetWhenNotPresent()
+    {
+        $sheets = $this->getApiSheets();
+        $doesTranslationSheetExist = false;
+        foreach ($sheets as $sheet) {
+            $title = $sheet->getProperties()->getTitle();
+            if ($title === $this->getSpreadSheetContentTabName()) {
+                $doesTranslationSheetExist = true;
+                break;
+            }
+        }
+
+        if ($doesTranslationSheetExist) return;
+
+        $body = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest([
+            'requests' => [
+                'addSheet' => [
+                    'properties' => [
+                        'title' => $this->getSpreadSheetContentTabName(),
+                    ]
+                ]
+            ]
+        ]);
+
+         $this->getGoogleSheetsService()
+            ->spreadsheets
+            ->batchUpdate($this->getSpreadSheetId(), $body);
     }
 
     /**

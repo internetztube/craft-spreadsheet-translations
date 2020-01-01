@@ -5,7 +5,7 @@ const init = () => {
   const $progressContainer = document.querySelector('.js-utility-push-handles-status');
 
   utilityButtonEventListener($trigger, $progressContainer, async (done) => {
-    await fetch(`/admin/spreadsheet-translations/utilities/push-handles`, { method: 'POST' });
+    await fetch(`${window.Craft.baseCpUrl}/spreadsheet-translations/utilities/push-handles`);
     done();
   });
 };

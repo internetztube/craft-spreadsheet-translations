@@ -1,0 +1,31 @@
+{% extends "_layouts/cp" %}
+{% set title = "Spreadsheet Translations" | t('spreadsheet-translations') %}
+
+{% block content %}
+    {% if credentialsValid %}
+        <script>
+            window.addEventListener('load', function() {
+              window.open("{{ url }}" , '_blank');
+              window.history.go(-1);
+            });
+        </script>
+
+        <b>{{ 'Redirecting...' | t('spreadsheet-translations') }}</b>
+        <p>
+            {{
+            'Please follow <a href="{url}">this link</a>.' | t('spreadsheet-translations', {
+                url: cpUrl("settings/plugins/spreadsheet-translations")
+            }) | raw
+            }}
+        </p>
+    {% else %}
+        <b>{{ 'The credentials are not valid!' | t('spreadsheet-translations') }}</b>
+        <p>
+            {{
+            'Check the <a href="{url}">settings</a> page.' | t('spreadsheet-translations', {
+                url: cpUrl("settings/plugins/spreadsheet-translations")
+            }) | raw
+            }}
+        </p>
+    {% endif %}
+{% endblock %}

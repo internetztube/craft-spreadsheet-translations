@@ -1,11 +1,29 @@
 <form class="utility">
     <div class="field">
         <div class="heading">
-            <label>Push site languages to spreadsheet</label>
-            <div class="instructions">This utility pushes all page languages created in the craft into the spreadsheet. Thereby only languages that are not defined in the spreadsheet will be stored.</div>
+            <label>{{ 'Pull translations from the spreadsheet to disk' | t('spreadsheet-translations') }}</label>
+            <div class="instructions">{{ 'Pulls all translations from the spreadsheet into static files on the disk.' | t('spreadsheet-translations') }}</div>
         </div>
         <div class="buttons">
-            <div class="btn submit js-utility-push-languages">Push languages</div>
+            <div class="btn submit js-utility-pull-translations">{{ 'Pull Translations' | t('spreadsheet-translations') }}</div>
+            <div class="utility-status js-utility-pull-translations-status spreadsheet-translations-utility-status">
+                <div class="alldone" data-icon="done"></div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<hr>
+<hr>
+
+<form class="utility">
+    <div class="field">
+        <div class="heading">
+            <label>{{ 'Push site languages to spreadsheet' | t('spreadsheet-translations') }}</label>
+            <div class="instructions">{{ 'Pushes all missing site languages into the spreadsheet. No languages get deleted!' | t('spreadsheet-translations') }}</div>
+        </div>
+        <div class="buttons">
+            <div class="btn submit js-utility-push-languages">{{ 'Push languages' | t('spreadsheet-translations') }}</div>
             <div class="utility-status js-utility-push-languages-status spreadsheet-translations-utility-status">
                 <div class="alldone" data-icon="done"></div>
             </div>
@@ -18,32 +36,12 @@
 <form class="utility">
     <div class="field">
         <div class="heading">
-            <label>Push translation handles from templates to spreadsheet</label>
-            <div class="instructions">This utility pushes all missing translation handles from the templates into the spreadsheet.</div>
+            <label>{{ 'Push translation handles from templates to spreadsheet' | t('spreadsheet-translations') }}</label>
+            <div class="instructions">{{ 'Pushes all missing translation handles from the templates into the spreadsheet. No handles get deleted!' | t('spreadsheet-translations') }}</div>
         </div>
         <div class="buttons">
-            <div class="btn submit js-utility-push-handles">Push handles</div>
+            <div class="btn submit js-utility-push-handles">{{ 'Push handles' | t('spreadsheet-translations') }}</div>
             <div class="utility-status js-utility-push-handles-status spreadsheet-translations-utility-status">
-                <div class="alldone" data-icon="done"></div>
-            </div>
-        </div>
-    </div>
-</form>
-
-
-<hr>
-
-
-
-<form class="utility">
-    <div class="field">
-        <div class="heading">
-            <label>Pull translations from the spreadsheet to disk</label>
-            <div class="instructions">This utility pulls all translations from the spreadsheet into static filed on the disk.</div>
-        </div>
-        <div class="buttons">
-            <div class="btn submit js-utility-pull-translations">Pull Translations</div>
-            <div class="utility-status js-utility-pull-translations-status spreadsheet-translations-utility-status">
                 <div class="alldone" data-icon="done"></div>
             </div>
         </div>
