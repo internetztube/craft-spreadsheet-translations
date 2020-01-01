@@ -19,8 +19,6 @@ class UtilitiesController extends Controller
         } catch (\Exception $exception) {
             $data = [
                 'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => [],
             ];
         }
 
@@ -40,8 +38,6 @@ class UtilitiesController extends Controller
         } catch (\Exception $exception) {
             $data = [
                 'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => [],
             ];
         }
 
@@ -61,7 +57,6 @@ class UtilitiesController extends Controller
         } catch (\Exception $exception) {
             $data = [
                 'success' => false,
-                'message' => $exception->getMessage(),
             ];
         }
 
