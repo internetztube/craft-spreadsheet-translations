@@ -2,7 +2,7 @@
     "name": "internetztube/craft-spreadsheet-translations",
     "description": "Adds support for dynamic translations from Google Spreadsheets.",
     "type": "craft-plugin",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "keywords": [
         "craft",
         "cms",
