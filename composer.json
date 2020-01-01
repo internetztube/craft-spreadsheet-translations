@@ -30,5 +30,11 @@
         "psr-4": {
           "internetztube\\spreadsheetTranslations\\": "src/"
         }
+    },
+    "extra": {
+        "name": "Spreadsheet Translations",
+        "handle": "spreadsheet-translations",
+        "changelogUrl": "https://raw.githubusercontent.com/internetztube/craft-spreadsheet-translations/master/CHANGELOG.md",
+        "class": "internetztube\\spreadsheetTranslations\\SpreadsheetTranslations"
     }
 }

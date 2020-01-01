@@ -35,7 +35,6 @@ class SpreadsheetTranslations extends Plugin
         self::$plugin = $this;
         $this->name =  \Craft::t('spreadsheet-translations', 'Spreadsheet Translations');
 
-
         // Add in our console commands
         if (Craft::$app instanceof ConsoleApplication) {
             $this->controllerNamespace = 'internetztube\spreadsheetTranslations\console\controllers';
