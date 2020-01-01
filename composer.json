@@ -2,7 +2,7 @@
     "name": "internetztube/craft-spreadsheet-translations",
     "description": "Adds support for dynamic translations from Google Spreadsheets.",
     "type": "craft-plugin",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "keywords": [
         "craft",
         "cms",
@@ -34,6 +34,8 @@
     "extra": {
         "name": "Spreadsheet Translations",
         "handle": "spreadsheet-translations",
+        "hasCpSettings": true,
+        "hasCpSection": true,
         "changelogUrl": "https://raw.githubusercontent.com/internetztube/craft-spreadsheet-translations/master/CHANGELOG.md",
         "class": "internetztube\\spreadsheetTranslations\\SpreadsheetTranslations"
     }
