@@ -6,7 +6,6 @@
         <script>
             window.addEventListener('load', function() {
               window.open("{{ url }}" , '_blank');
-              window.history.go(-1);
             });
         </script>
 
@@ -14,7 +13,7 @@
         <p>
             {{
             'Please follow <a href="{url}">this link</a>.' | t('spreadsheet-translations', {
-                url: cpUrl("settings/plugins/spreadsheet-translations")
+                url: url
             }) | raw
             }}
         </p>
