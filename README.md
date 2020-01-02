@@ -2,7 +2,7 @@
 
 This plugin enables non-developers to access static translations via a Google spreadsheet.
 
-![Screenshot](src/icon.svg)
+![Share Image](screenshots/share.png)
 
 **🤩 INSTALL A FREE, UNLIMITED TRIAL TODAY!**
 
