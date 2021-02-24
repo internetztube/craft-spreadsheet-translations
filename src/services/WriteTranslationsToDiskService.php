@@ -6,7 +6,7 @@ use craft\base\Component;
 
 class WriteTranslationsToDiskService extends BaseSpreadsheetService
 {
-    public function persist(array $translations)
+    public function persist(array $translations, string $translationCategory)
     {
         $files = [];
         $groupedTranslations = $this->groupTranslationsByHandleAndLanguage($translations);
@@ -18,11 +18,10 @@ class WriteTranslationsToDiskService extends BaseSpreadsheetService
         foreach ($files as $language => $value) {
             $directoryPath = $translationPath . DIRECTORY_SEPARATOR . $language;
             if (!file_exists($directoryPath)) mkdir($directoryPath);
-            $filePath = $directoryPath . DIRECTORY_SEPARATOR . $this->getTranslationCategory() . '.php';
+            $filePath = $directoryPath . DIRECTORY_SEPARATOR . $translationCategory . '.php';
             file_put_contents($filePath, $value);
         }
     }
-
 
     private function buildFile(array $groupedTranslations)
     {

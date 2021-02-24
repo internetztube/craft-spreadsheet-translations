@@ -4,14 +4,14 @@
 
 {{ forms.textareaField({
     label: 'Contents of the access key file',
-    instructions: '',
+    instructions: 'Instructions for generating the access key file can be found [here](https://github.com/internetztube/craft-spreadsheet-translations#google-api).',
     id: 'keyFileContents',
     name: 'keyFileContents',
     value: settings['keyFileContents'],
     rows: 8,
     cols: 50,
     wrap: 'soft',
-    class: 'code',
+    class: 'code ',
     placeholder: '{
   "type": "service_account",
   "project_id": "PROJECT_ID",
@@ -27,8 +27,8 @@
 }) }}
 
 {{ forms.textField({
-    label: 'Sheet Name where the Translations are located',
-    instructions: '',
+    label: 'Sheet Name Prefix in Google Spreadsheets',
+    instructions: 'This value will be slugified.  The translation category will be appended directly to it.',
     id: 'sheetContentTabName',
     name: 'sheetContentTabName',
     value: settings['sheetContentTabName'],
@@ -45,6 +45,15 @@
     value: settings['spreadSheetId'],
     class: 'code',
     placeholder: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX',
+}) }}
+
+{{ forms.textField({
+    label: 'Plugin Name in CP Sidebar',
+    instructions: '',
+    id: 'sidebarName',
+    name: 'sidebarName',
+    value: settings['sidebarName'],
+    placeholder: 'Spreadsheet Translations'
 }) }}
 
 <div class="btn js-test-config-button">{{ 'Test credentials' | t('spreadsheet-translations') }}</div>

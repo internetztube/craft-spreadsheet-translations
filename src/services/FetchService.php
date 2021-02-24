@@ -6,11 +6,11 @@ use craft\models\Site;
 
 class FetchService extends BaseSpreadsheetService
 {
-    public function checkCredentials(): bool
+    public function checkCredentials(string $translationCategory): bool
     {
-        try {
             $this->getGoogleSheetsService(true);
-            $this->rawRows();
+            $this->rawRows($translationCategory);
+        try {
         } catch (\Exception $exception) {
             throw $exception;
             return false;
@@ -66,27 +66,27 @@ class FetchService extends BaseSpreadsheetService
         return array_values($result);
     }
 
-    public function rawRows(): array
+    public function rawRows(string $translationCategory, bool $forceRebuild = false): array
     {
-        $contentRange = $this->getContentRange();
+        $contentRange = $this->getContentRange($translationCategory);
         if (!$contentRange) return [];
         $range = $contentRange->stringRepresentation;
         if (!$range) return [];
 
-        $result = $this->getGoogleSheetsService()
+        $result = $this->getGoogleSheetsService($forceRebuild)
             ->spreadsheets_values
             ->get($this->getSpreadSheetId(), $range)
             ->getValues();
 
-        if (!$result) return [];
+        if (!is_array($result)) return [];
         return $result;
     }
 
-    public function getSheetId()
+    public function getSheetId(string $translationCategory)
     {
         $sheets = $this->getApiSheets();
         foreach ($sheets as $sheet) {
-            if (strcmp($this->getSpreadSheetContentTabName(), $sheet->properties->title) === 0) {
+            if (strcmp($this->getSpreadSheetContentTabName($translationCategory), $sheet->properties->title) === 0) {
                 return $sheet->properties->sheetId;
             }
         }

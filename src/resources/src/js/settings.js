@@ -31,7 +31,7 @@ const init = () => {
     } else {
       $testResultConfig.classList.remove('success');
       $testResultConfig.classList.add('error');
-      $testResultConfig.innerHTML = "Error! <br />" + resultData.message + "<br />" + "Class: " + resultData.exception_class;
+      $testResultConfig.innerText = "Error! \n" + resultData.message + "\n" + "Class: " + resultData.exception_class;
     }
     $testConfigButton.classList.remove('disabled');
   });
