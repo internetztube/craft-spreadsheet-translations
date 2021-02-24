@@ -13,12 +13,12 @@ class UtilitiesController extends Controller
         try {
             $missingLanguages = SpreadsheetTranslations::$plugin->missingLanguages->addMissingLanguages();
             $data = [
-                'success' => true,
-                'data' => $missingLanguages,
+              'success' => true,
+              'data' => $missingLanguages,
             ];
         } catch (\Exception $exception) {
             $data = [
-                'success' => false,
+              'success' => false,
             ];
         }
 
@@ -27,18 +27,25 @@ class UtilitiesController extends Controller
 
     public function actionPushHandles()
     {
-        try {
-            $handles = SpreadsheetTranslations::$plugin->templateTranslation->getTranslationsFromTemplates();
-            $missingHandles = SpreadsheetTranslations::$plugin->missingHandle->pushHandleToSpreadSheet($handles);
+        $data = ['success' => true, 'data' => [],];
 
-            $data = [
-                'success' => true,
-                'data' => $missingHandles,
-            ];
+        try {
+            $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+            foreach ($translationCategories as $translationCategory) {
+                $translationHandles = SpreadsheetTranslations::$plugin->translationCategories->handlesFromCategory($translationCategory);
+                if ($translationCategory === 'site') {
+                    $templateHandles = SpreadsheetTranslations::$plugin->templateTranslation->getTranslationsFromTemplates();
+                    $translationHandles = array_merge($templateHandles, $translationHandles);
+                }
+
+                $missingHandles = SpreadsheetTranslations::$plugin->missingHandle->pushHandleToSpreadSheet($translationCategory, $translationHandles);
+                $data['data'] = array_merge($data['data'], $missingHandles);
+                dd($data);
+                continue;
+            }
         } catch (\Exception $exception) {
-            $data = [
-                'success' => false,
-            ];
+            $data['success'] = false;
+            $data['message'] = $exception->getMessage();
         }
 
         return $this->asJson($data);
@@ -47,16 +54,19 @@ class UtilitiesController extends Controller
     public function actionPullTranslations()
     {
         try {
-            $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
-            $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
-            SpreadsheetTranslations::$plugin->writeTranslationsToDisk->persist($translations);
-
+            $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+            foreach ($translationCategories as $translationCategory) {
+                $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows($translationCategory);
+                $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
+                SpreadsheetTranslations::$plugin->writeTranslationsToDisk->persist($translations, $translationCategory);
+            }
             $data = [
-                'success' => true,
+              'success' => true,
             ];
         } catch (\Exception $exception) {
             $data = [
-                'success' => false,
+              'success' => false,
+              'message' => $exception->getMessage(),
             ];
         }
 

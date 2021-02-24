@@ -13,6 +13,7 @@ class Settings extends Model
     public $keyFileContents = '';
     public $spreadSheetId = '';
     public $sheetContentTabName = '';
+    public $sidebarName = 'Spreadsheet Translations';
 
     public function rules()
     {
@@ -20,6 +21,7 @@ class Settings extends Model
             ['keyFileContents', 'required'],
             ['spreadSheetId', 'required'],
             ['sheetContentTabName', 'required'],
+            ['sidebarName', 'required'],
         ];
     }
 }

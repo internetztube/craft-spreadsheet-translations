@@ -7,49 +7,52 @@ use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
 
 class MissingLanguagesService extends BaseSpreadsheetService
 {
-    /**
-     * Pushes all missing languages to the spreadsheet.
-     * @return array
-     * @throws \Google_Exception
-     */
+  /**
+   * Pushes all missing languages from a category to the spreadsheet.
+   * @param string $translationCategory
+   * @return array
+   */
     public function addMissingLanguages(): array
     {
-        $this->createTranslationsSheetWhenNotPresent();
-        $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
-        $missingLanguages = $this->missingLanguages($rawRows);
-        if (count($missingLanguages) <= 0) return [];
+        $result = [];
+        $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+        foreach ($translationCategories as $translationCategory) {
+            $this->createTranslationsSheetWhenNotPresent($translationCategory);
+            $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows($translationCategory);
+            $missingLanguages = $this->missingLanguages($rawRows, $translationCategory);
+            if (count($missingLanguages) <= 0) continue;
+            $result = array_merge($result, $missingLanguages);
 
-        if (count($rawRows) <= 0) {
-            $range = $this->buildRangeString($this->getSpreadSheetContentTabName(), 2, 1, 2, 1);
-        } else {
-            $languageRow = array_shift($rawRows);
-            $startColumn = count($languageRow)+1;
-            $startColumn = $startColumn <= 1 ? 2 : $startColumn;
-            $range = $this->buildRangeString($this->getSpreadSheetContentTabName(), $startColumn, 1, count($missingLanguages)+count($languageRow)+1, 1);
+            if (count($rawRows) <= 0) {
+                $range = $this->buildRangeString($this->getSpreadSheetContentTabName($translationCategory), 2, 1, 2, 1);
+            } else {
+                $languageRow = array_shift($rawRows);
+                $startColumn = count($languageRow)+1;
+                $startColumn = $startColumn <= 1 ? 2 : $startColumn;
+                $range = $this->buildRangeString($this->getSpreadSheetContentTabName($translationCategory), $startColumn, 1, count($missingLanguages)+count($languageRow)+1, 1);
+            }
+            $spreadSheetService = $this->getGoogleSheetsService();
+            $valueRange = new \Google_Service_Sheets_ValueRange();
+            $valueRange->setValues(["values" => $missingLanguages]);
+            $conf = ["valueInputOption" => "RAW"];
+            $ins = ["insertDataOption" => "INSERT_ROWS"];
+            $spreadSheetService->spreadsheets_values->append($this->getSpreadSheetId(), $range, $valueRange, $conf, $ins);
         }
-
-        $spreadSheetService = $this->getGoogleSheetsService();
-        /** @var \Google_Service_Sheets_Sheet $sheet */
-        $emptySheet = null;
-        $valueRange=  new \Google_Service_Sheets_ValueRange();
-        $valueRange->setValues(["values" => $missingLanguages]);
-        $conf = ["valueInputOption" => "RAW"];
-        $ins = ["insertDataOption" => "INSERT_ROWS"];
-        $spreadSheetService->spreadsheets_values->append($this->getSpreadSheetId(), $range, $valueRange, $conf, $ins);
-        return $missingLanguages;
+        return array_unique($result);
     }
 
     /**
      * Returns all languages that are not already in the spreadsheet.
      * @param array $rawRows
+     * @param string $translationCategory
      * @return array
      * @throws \Google_Exception
      */
-    private function missingLanguages(array $rawRows)
+    private function missingLanguages(array $rawRows, string $translationCategory)
     {
         $missingLanguages = [];
         $languages = SpreadsheetTranslations::$plugin->fetch->languages($rawRows);
-        $contentRange = $this->getContentRange();
+        $contentRange = $this->getContentRange($translationCategory);
         if (!$contentRange) return [];
 
         $craftSitesLanguages = array_map(function(Site $site) {

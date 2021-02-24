@@ -4,8 +4,8 @@ namespace internetztube\spreadsheetTranslations\services;
 
 use craft\base\Component;
 use craft\helpers\StringHelper;
-use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
 use Google_Service_Sheets_BatchUpdateSpreadsheetRequest;
+use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
 
 abstract class BaseSpreadsheetService extends Component
 {
@@ -24,28 +24,17 @@ abstract class BaseSpreadsheetService extends Component
     /** @var array */
     private $apiSheets;
 
-    /** @var string */
-    private const TRANSLATE_CATEGORY = 'site';
-
-
     /**
      * Returns the name of the tab in which the translations are maintained.
+     * @param string $translationCategory
      * @return string
      */
-    public function getSpreadSheetContentTabName()
+    public function getSpreadSheetContentTabName(string $translationCategory)
     {
         if ($this->sheetContentTabName) return $this->sheetContentTabName;
         $settings = SpreadsheetTranslations::$plugin->getSettings();
-        return StringHelper::slugify($settings->sheetContentTabName);
-    }
-
-    /**
-     * Returns the translation category in which the translation is in.
-     * @return string
-     */
-    public function getTranslationCategory()
-    {
-        return self::TRANSLATE_CATEGORY;
+        $result = $settings->sheetContentTabName . ' ' . $translationCategory;
+        return StringHelper::slugify($result);
     }
 
     /**
@@ -72,11 +61,11 @@ abstract class BaseSpreadsheetService extends Component
 
     /**
      * Converts a number to letters in the speadsheets format.
-     * @example 1 -> "A", 26 -> "Z", 27 -> "AA", ...
      * @param int $number
      * @return string|null
+     * @example 1 -> "A", 26 -> "Z", 27 -> "AA", ...
      */
-    public function rangeNumberToLetters(int $number): string
+    public function rangeNumberToLetters(int $number): ?string
     {
         if ($number <= 0) return null;
         $letter = '';
@@ -90,9 +79,9 @@ abstract class BaseSpreadsheetService extends Component
 
     /**
      * Converts letters to a number.
-     * @example "A" -> 1, "Z" -> 26, "AA" -> 27, ...
      * @param string $letters
      * @return int
+     * @example "A" -> 1, "Z" -> 26, "AA" -> 27, ...
      */
     public function rangeLettersToNumber(string $letters): int
     {
@@ -103,7 +92,7 @@ abstract class BaseSpreadsheetService extends Component
         for ($i = 0; $i < $length; $i++) {
             $column += (ord($letters[$i]) - 64) * pow(26, $length - $i - 1);
         }
-        return (int) $column;
+        return (int)$column;
     }
 
     /**
@@ -129,28 +118,29 @@ abstract class BaseSpreadsheetService extends Component
 
     /**
      * Returns the cell range of the translations sheets.
-     * @example "Translations!A1:C32"
-     * @return string|null
+     * @param string $translationCategory
+     * @return object|null
      * @throws \Google_Exception
+     * @example "Translations!A1:C32"
      */
-    public function getContentRange(): ?object
+    public function getContentRange(string $translationCategory): ?object
     {
-        $this->createTranslationsSheetWhenNotPresent();
+        $this->createTranslationsSheetWhenNotPresent($translationCategory);
         $sheets = $this->getApiSheets();
 
         /** @var \Google_Service_Sheets_Sheet $sheet */
         foreach ($sheets as $sheet) {
             $title = $sheet->getProperties()->getTitle();
-            if ($title !== $this->getSpreadSheetContentTabName()) continue;
+            if ($title !== $this->getSpreadSheetContentTabName($translationCategory)) continue;
             $rowCount = $sheet->getProperties()->getGridProperties()->rowCount;
             $columnCount = $sheet->getProperties()->getGridProperties()->columnCount;
 
             $stringRepresentation = $this->buildRangeString($title, 1, 1, $columnCount, $rowCount);
-            return (object) [
-                'stringRepresentation' => $stringRepresentation,
-                'sheetRows' => $rowCount,
-                'sheetColumns' => $columnCount,
-                'sheetTitle' => $title,
+            return (object)[
+              'stringRepresentation' => $stringRepresentation,
+              'sheetRows' => $rowCount,
+              'sheetColumns' => $columnCount,
+              'sheetTitle' => $title,
             ];
         }
         return null;
@@ -159,22 +149,22 @@ abstract class BaseSpreadsheetService extends Component
     public function buildRangeString(string $title, int $startColumn, int $startRow, int $endColumn, int $endRow): string
     {
         return vsprintf('%s!%s%d:%s%s', [
-            $title,
-            $this->rangeNumberToLetters($startColumn),
-            $startRow,
-            $this->rangeNumberToLetters($endColumn),
-            $endRow
+          $title,
+          $this->rangeNumberToLetters($startColumn),
+          $startRow,
+          $this->rangeNumberToLetters($endColumn),
+          $endRow
         ]);
     }
 
     /**
      * Fills a array to a specified length with a specified value.
-     * @example $input: [1,2,3,4], $length: 6, $value: -1 => [1,2,3,4,-1,-1]
-     * @example $input: [1,2,3,4], $length: 2, $value: -1 => [1,2,3,4]
      * @param array $input
      * @param int $length
      * @param $value
      * @return array
+     * @example $input: [1,2,3,4], $length: 6, $value: -1 => [1,2,3,4,-1,-1]
+     * @example $input: [1,2,3,4], $length: 2, $value: -1 => [1,2,3,4]
      */
     public function fillArrayToLengthWithValue(array $input, int $length, $value): array
     {
@@ -217,49 +207,44 @@ abstract class BaseSpreadsheetService extends Component
 
     /**
      * Raw sheets from the corresponding spreadsheet.
-     * @return array|\Google_Service_Sheets_Spreadsheet
+     * @param bool $forceRebuild
      * @throws \Google_Exception
+     * @return array
      */
-    protected function getApiSheets()
+    protected function getApiSheets(bool $forceRebuild = false)
     {
-        if ($this->apiSheets) return $this->apiSheets;
-        $this->apiSheets = $this->getGoogleSheetsService()
-            ->spreadsheets
-            ->get($this->getSpreadSheetId());
+        if ($this->apiSheets && $forceRebuild) return $this->apiSheets;
+        $this->apiSheets = $this->getGoogleSheetsService($forceRebuild)
+          ->spreadsheets
+          ->get($this->getSpreadSheetId());
         return $this->apiSheets;
     }
 
     /**
      * Makes sure that the "Translations" sheet exists.
+     * @param string $translationCategory
      * @throws \Google_Exception
      */
-    protected function createTranslationsSheetWhenNotPresent()
+    protected function createTranslationsSheetWhenNotPresent(string $translationCategory)
     {
         $sheets = $this->getApiSheets();
-        $doesTranslationSheetExist = false;
+        $sheetTitle = $this->getSpreadSheetContentTabName($translationCategory);
+
         foreach ($sheets as $sheet) {
             $title = $sheet->getProperties()->getTitle();
-            if ($title === $this->getSpreadSheetContentTabName()) {
-                $doesTranslationSheetExist = true;
-                break;
-            }
+            if ($title === $sheetTitle) return;
         }
 
-        if ($doesTranslationSheetExist) return;
-
         $body = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest([
-            'requests' => [
-                'addSheet' => [
-                    'properties' => [
-                        'title' => $this->getSpreadSheetContentTabName(),
-                    ]
-                ]
-            ]
+          'requests' => ['addSheet' => ['properties' => ['title' => $sheetTitle,]]]
         ]);
 
-         $this->getGoogleSheetsService()
-            ->spreadsheets
-            ->batchUpdate($this->getSpreadSheetId(), $body);
+        try {
+            $this->getGoogleSheetsService()
+              ->spreadsheets
+              ->batchUpdate($this->getSpreadSheetId(), $body);
+        } catch (\Exception $e) {
+        }
     }
 
     /**
