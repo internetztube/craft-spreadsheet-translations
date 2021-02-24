@@ -28,8 +28,11 @@ class SettingsController extends Controller
             'exception_class' => null,
         ];
         try {
+            $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+            $translationCategory = $translationCategories[0];
+
             SpreadsheetTranslations::$plugin->fetch->getGoogleSheetsService(true);
-            SpreadsheetTranslations::$plugin->fetch->rawRows();
+            SpreadsheetTranslations::$plugin->fetch->rawRows($translationCategory);
         } catch (\Exception $e) {
             $data['message'] = $e->getMessage();
             $data['exception_class'] = get_class($e);

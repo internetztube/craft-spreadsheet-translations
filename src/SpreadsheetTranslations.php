@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\services\UserPermissions;
+use internetztube\spreadsheetTranslations\services\TranslationCategoryService;
 use internetztube\spreadsheetTranslations\utilities\SpreadsheetTranslationsUtility;
 use yii\base\Event;
 use craft\events\RegisterCpNavItemsEvent;
@@ -33,7 +34,7 @@ class SpreadsheetTranslations extends Plugin
     {
         parent::init();
         self::$plugin = $this;
-        $this->name =  \Craft::t('spreadsheet-translations', 'Spreadsheet Translations');
+        $this->name = $this->getSettings()->sidebarName;
 
         // Add in our console commands
         if (Craft::$app instanceof ConsoleApplication) {
@@ -46,6 +47,7 @@ class SpreadsheetTranslations extends Plugin
             'templateTranslation' => TemplateTranslationService::class,
             'writeTranslationsToDisk' => WriteTranslationsToDiskService::class,
             'missingHandle' => MissingHandleService::class,
+            'translationCategories' => TranslationCategoryService::class,
         ]);
 
         Event::on(Utilities::class, Utilities::EVENT_REGISTER_UTILITY_TYPES, function (RegisterComponentTypesEvent $event) {
