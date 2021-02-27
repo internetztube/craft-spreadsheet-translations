@@ -4,8 +4,6 @@ This plugin enables non-developers to access static translations via a Google sp
 
 ![Share Image](screenshots/share.png)
 
-**🤩 INSTALL A FREE, UNLIMITED TRIAL TODAY!**
-
 ## Screenshots
 ![Sample Spreadsheet](screenshots/spreadsheet.png)
 ![Translation Files](screenshots/translation-files.png)

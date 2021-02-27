@@ -36,11 +36,11 @@ $data = [
 ', date('c'));
 
         foreach ($groupedTranslations as $handle => $translation) {
-            $result .= sprintf('%s  "%s" => "%s",
+            $result .= sprintf('    "%s" => "%s",%s
 ',
-                ($translation['isEmpty'] ? '//' : '  '),
                 addslashes($handle),
-                addslashes($translation['value'])
+                addslashes($translation['value']),
+                ($translation['isEmpty'] ? ' // empty ' : '')
             );
         }
         $result .= '];

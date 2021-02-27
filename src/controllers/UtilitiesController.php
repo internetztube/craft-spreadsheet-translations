@@ -40,8 +40,6 @@ class UtilitiesController extends Controller
 
                 $missingHandles = SpreadsheetTranslations::$plugin->missingHandle->pushHandleToSpreadSheet($translationCategory, $translationHandles);
                 $data['data'] = array_merge($data['data'], $missingHandles);
-                dd($data);
-                continue;
             }
         } catch (\Exception $exception) {
             $data['success'] = false;

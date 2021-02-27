@@ -40,8 +40,9 @@ class TranslationCategoryService extends BaseSpreadsheetService
             $files = scandir($languageFolderPath);
             foreach ($files as $fileName) {
                 $filePath = $languageFolderPath . DIRECTORY_SEPARATOR . $fileName;
-                if (!file_exists($filePath)) continue;
                 $pathInfo = pathinfo($filePath);
+                if ($pathInfo['filename'] !== $translationCategory) continue;
+                if (!file_exists($filePath)) continue;
                 if ($pathInfo['extension'] !== 'php') continue;
                 $fileContent = include $filePath;
                 if (!is_array($fileContent)) continue;

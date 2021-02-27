@@ -41,9 +41,15 @@ class MissingHandleService extends BaseSpreadsheetService
             $preparedRow[] = $handle;
             foreach ($languages as $language) {
                 $filePath = $this->translationPath() . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $translationCategory . '.php';
-                if (!file_exists($filePath)) continue;
+                if (!file_exists($filePath)) {
+                    $preparedRow[] = '';
+                    continue;
+                }
                 $fileContent = include $filePath;
-                if (!isset($fileContent[$handle])) continue;
+                if (!isset($fileContent[$handle])) {
+                    $preparedRow[] = '';
+                    continue;
+                }
                 $preparedRow[] = $fileContent[$handle];
             }
             $preparedHandles[] = $preparedRow;
