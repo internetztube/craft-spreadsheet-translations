@@ -24,7 +24,7 @@ You can also install this plugin via the Plugin Store in the Craft Control Panel
 ## Issues
 Please report any issues you find to the [Issues](https://github.com/internetztube/craft-spreadsheet-translations/issues) page.
 
-## Known Issues
+## Dynamic Strings
 * You CANNOT translate dynamic strings. Please use the [message parameter](https://docs.craftcms.com/v3/static-translations.html#provide-the-translations). 
     ```
     {{ ("Welcome back, " ~ currentUser.friendlyName ~ "!") | t }}
@@ -33,8 +33,6 @@ Please report any issues you find to the [Issues](https://github.com/internetztu
     {{ 'Welcome back, {name}!' | t(params = { name: currentUser.friendlyName}) }}
     ```
     
-* Only translations made in Twig with the `{{ "..." | t }}`-filter get pushed automatically into the spreadsheet.
-
 ## Console Utilities
 * Pulls all translations from the spreadsheet into static files on the disk. No handles get deleted!
     ```
