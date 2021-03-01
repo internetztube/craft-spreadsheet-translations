@@ -13,6 +13,7 @@ class Settings extends Model
     public $keyFileContents = '';
     public $spreadSheetId = '';
     public $sheetContentTabName = '';
+    public $slugifyContentTabName = true;
     public $sidebarName = 'Spreadsheet Translations';
 
     public function rules()

@@ -28,7 +28,7 @@
 
 {{ forms.textField({
     label: 'Sheet Name Prefix in Google Spreadsheets',
-    instructions: 'This value will be slugified.  The translation category will be appended directly to it.',
+    instructions: 'The translation category will be appended directly to it.',
     id: 'sheetContentTabName',
     name: 'sheetContentTabName',
     value: settings['sheetContentTabName'],
@@ -36,6 +36,13 @@
     placeholder: 'Translations'
 }) }}
 
+{{ forms.lightswitchField({
+    label: 'Slugify Sheet Tab Name',
+    instructions: 'Whenever the sheet tab name should be slugified.',
+    id: 'slugifyContentTabName',
+    name: 'slugifyContentTabName',
+    on: settings['slugifyContentTabName'],
+}) }}
 
 {{ forms.textField({
     label: 'Spreadsheet Id',

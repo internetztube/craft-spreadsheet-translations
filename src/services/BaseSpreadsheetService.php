@@ -34,7 +34,10 @@ abstract class BaseSpreadsheetService extends Component
         if ($this->sheetContentTabName) return $this->sheetContentTabName;
         $settings = SpreadsheetTranslations::$plugin->getSettings();
         $result = $settings->sheetContentTabName . ' ' . $translationCategory;
-        return StringHelper::slugify($result);
+        $result = str_replace([':', '!'], '', $result); // Remove control chars
+        $result = preg_replace('/\s+/', ' ', $result); // Remove double whitespaces
+        if ($settings->slugifyContentTabName) return StringHelper::slugify($result);
+        return $result;
     }
 
     /**

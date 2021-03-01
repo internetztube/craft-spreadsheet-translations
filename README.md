@@ -79,7 +79,7 @@ https://docs.google.com/spreadsheets/d/<SPREADSHEET-ID>/edit
 `https://docs.google.com/spreadsheets/d/11fRj44MwhGqFGpIYHGfwpA69ed-Z657WdiXex6kvuo8/edit` -> `11fRj44MwhGqFGpIYHGfwpA69ed-Z657WdiXex6kvuo8`
 
 #### Sheet Name
-This is the name of the sheet, where the translations are stored, which should be applied for this project. This string gets slugified. `DEV: Translations` -> `dev-translations`.
+This is the name of the sheet, where the translations are stored, which should be applied for this project.
 
 ---
 Brought to you by [Frederic Köberl](https://github.com/internetztube)
