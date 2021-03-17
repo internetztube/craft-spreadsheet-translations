@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.3 - 2021-03-17
+### Fixed
+-  Fix console commands. #13
+
 ## 1.1.2 - 2021-03-01
 ### Added
 - Update logic of Spreadsheet Tab Name. Slugify the sheet tab name is now optional. 

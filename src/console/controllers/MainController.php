@@ -19,10 +19,13 @@ class MainController extends Controller
      */
     public function actionPullTranslations()
     {
-        $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows();
-        $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
-        SpreadsheetTranslations::$plugin->writeTranslationsToDisk->persist($translations);
-        $this->stdout(sprintf("Saved %d translations to disk.\n", count($translations)));
+        $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+        foreach ($translationCategories as $translationCategory) {
+            $rawRows = SpreadsheetTranslations::$plugin->fetch->rawRows($translationCategory);
+            $translations = SpreadsheetTranslations::$plugin->fetch->translations($rawRows);
+            SpreadsheetTranslations::$plugin->writeTranslationsToDisk->persist($translations, $translationCategory);
+            $this->stdout(sprintf("%s: Saved %d translations to disk.\n", $translationCategory, count($translations)));
+        }
     }
 
     /**
@@ -42,8 +45,18 @@ class MainController extends Controller
      */
     public function actionPushMissingHandles()
     {
-        $translations = SpreadsheetTranslations::$plugin->templateTranslation->getTranslationsFromTemplates();
-        $insertedHandles = SpreadsheetTranslations::$plugin->missingHandle->pushHandleToSpreadSheet($translations);
-        $this->stdout(sprintf("added %d missing handles\n", count($insertedHandles)));
+        $missingHandles = [];
+
+        $translationCategories = SpreadsheetTranslations::$plugin->translationCategories->categories();
+        foreach ($translationCategories as $translationCategory) {
+            $translationHandles = SpreadsheetTranslations::$plugin->translationCategories->handlesFromCategory($translationCategory);
+            if ($translationCategory === 'site') {
+                $templateHandles = SpreadsheetTranslations::$plugin->templateTranslation->getTranslationsFromTemplates();
+                $translationHandles = array_merge($templateHandles, $translationHandles);
+            }
+            $tmp = SpreadsheetTranslations::$plugin->missingHandle->pushHandleToSpreadSheet($translationCategory, $translationHandles);
+            $missingHandles = array_merge($missingHandles, $tmp);
+        }
+        $this->stdout(sprintf("added %d missing handles\n", count($missingHandles)));
     }
 }
