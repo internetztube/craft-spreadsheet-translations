@@ -1,1 +1,20 @@
-.spreadsheet-translations-utility-status{opacity:1}.spreadsheet-translations-utility-status *{-webkit-transition:opacity .5s;transition:opacity .5s}.spreadsheet-translations-utility-status>*{opacity:0}.spreadsheet-translations-utility-status>.active{opacity:1!important}
+.spreadsheet-translations-utility-status {
+    opacity: 1
+}
+
+.spreadsheet-translations-utility-status * {
+    -webkit-transition: opacity .5s;
+    transition: opacity .5s
+}
+
+.spreadsheet-translations-utility-status > * {
+    opacity: 0
+}
+
+.spreadsheet-translations-utility-status > .active {
+    opacity: 1 !important
+}
+
+.spreadsheet-translations-utility-status.utility-status .progressbar {
+    transform: none;
+}

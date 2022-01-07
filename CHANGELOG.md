@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.4 - 2022-01-07
+### Added
+-  Added support for Vue translation handle extraction.
+
 ## 1.1.3 - 2021-03-17
 ### Fixed
 -  Fix console commands. #13

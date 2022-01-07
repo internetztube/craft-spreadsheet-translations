@@ -2,21 +2,36 @@
 
 namespace internetztube\spreadsheetTranslations\services;
 
-use craft\base\Component;
-use craft\helpers\FileHelper;
-use Symfony\Component\Filesystem\Filesystem;
-
 class TemplateTranslationService extends BaseSpreadsheetService
 {
-    private const SUPPORTED_TEMPLATE_EXTENSIONS = ['html', 'twig'];
-    private const DELIMITER_START = '$this->extensions[\'craft\web\twig\Extension\']->translateFilter("';
-    private const DELIMITER_END = '"';
+    private const DELIMITERS = [
+        [
+            'delimiterStart' => '$this->extensions[\'craft\web\twig\Extension\']->translateFilter("',
+            'delimiterEnd' => '"',
+            'fileExtensions' => ['html', 'twig'],
+            'extractionMode' => 'twig',
+        ],
+        [
+            // $t('___'
+            'delimiterStart' => '$t(\'',
+            'fileExtensions' => ['vue', 'js'],
+            'delimiterEnd' => '\'',
+            'extractionMode' => 'plain',
+        ],
+        [
+            // $t("___"
+            'delimiterStart' => '$t("',
+            'fileExtensions' => ['vue', 'js'],
+            'delimiterEnd' => '"',
+            'extractionMode' => 'plain',
+        ],
+    ];
 
     /**
      * Entry point for extracting all translations from all templates.
      * @return array
      */
-    public function getTranslationsFromTemplates()
+    public function getTranslationsFromTemplates(): array
     {
         $originalTemplatesPath = \Craft::$app->view->getTemplatesPath();
         $templatesPath = $this->templatesPath();
@@ -35,57 +50,100 @@ class TemplateTranslationService extends BaseSpreadsheetService
     }
 
     /**
-     *
      * @param string $translationPath
      * @return array
      */
-    private function getTranslationsFromTemplateFile(string $translationPath)
+    private function getTranslationsFromTemplateFile(string $translationPath): array
+    {
+        $result = [];
+        $fileExtention = pathinfo($translationPath, PATHINFO_EXTENSION);
+
+        foreach (self::DELIMITERS as $delimiter) {
+            if (!in_array($fileExtention, $delimiter['fileExtensions'])) { continue; }
+            if ($delimiter['extractionMode'] === 'twig') {
+                $extractionResult = $this->getTranslationsFromTwigTemplateFile($translationPath, $delimiter['delimiterStart'], $delimiter['delimiterEnd']);
+            } elseif ($delimiter['extractionMode'] === 'plain') {
+                $extractionResult = $this->getTranslationsFromPlainTemplateFile($translationPath, $delimiter['delimiterStart'], $delimiter['delimiterEnd']);
+            }
+            $result = array_merge($result, $extractionResult);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $translationPath
+     * @param string $delimiterStart
+     * @param string $delimiterEnd
+     * @return array
+     */
+    private function getTranslationsFromTwigTemplateFile(string $translationPath, string $delimiterStart, string $delimiterEnd): array
     {
         try {
             $source = \Craft::$app->getView()->getTwig()->getLoader()->getSourceContext($translationPath);
             $document = \Craft::$app->getView()->getTwig()->compileSource($source);
-            return $this->extractTranslationsFromDocument($document);
+            return $this->extractTranslationsFromDocument($document, $delimiterStart, $delimiterEnd);
         } catch (\Exception $e) {
             // @TODO add logging
             return [];
         }
     }
 
-    private function extractTranslationsFromDocument(string $document)
+    /**
+     * @param string $translationPath
+     * @param string $delimiterStart
+     * @param string $delimiterEnd
+     * @return array
+     */
+    private function getTranslationsFromPlainTemplateFile(string $translationPath, string $delimiterStart, string $delimiterEnd): array
     {
-        $result = explode(self::DELIMITER_START, $document);
+        $translationPath = $this->templatesPath() . $translationPath;
+        $document = file_get_contents($translationPath);
+        return $this->extractTranslationsFromDocument($document, $delimiterStart, $delimiterEnd);
+    }
+
+    /**
+     * @param string $document
+     * @param string $delimiterStart
+     * @param string $delimiterEnd
+     * @return array
+     */
+    private function extractTranslationsFromDocument(string $document, string $delimiterStart, string $delimiterEnd): array
+    {
+        $result = explode($delimiterStart, $document);
         array_shift($result);
-        $result = array_map(function($item) {
-            return explode(self::DELIMITER_END, $item)[0];
+        return array_map(function ($item) use ($delimiterEnd) {
+            return explode($delimiterEnd, $item)[0];
         }, $result);
-        return $result;
     }
 
     /**
      * Returns all template file paths relative to the `templates/` folder.
      * @return array
      */
-    private function getTemplatePaths()
+    private function getTemplatePaths(): array
     {
         $templatesPath = $this->templatesPath();
         $result = $this->scanDirectoryRecursive($templatesPath);
-        $result = array_filter($result, function($item) {
+        $result = array_filter($result, function ($item) {
             $extension = pathInfo($item, PATHINFO_EXTENSION);
-            return in_array($extension, self::SUPPORTED_TEMPLATE_EXTENSIONS);
+            return in_array($extension, $this->getAllSupportedTemplateExtensions());
         });
         $result = array_map(function($item) use ($templatesPath) {
             $info = pathInfo($item);
-            return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'];
+            return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '.' . $info['extension'];
         }, $result);
-        $result = array_unique($result);
-        return $result;
+        return array_unique($result);
     }
 
-    // Thanks! https://stackoverflow.com/a/46697247/2421121
-    private function scanDirectoryRecursive(string $dir)
+    /**
+     * Thanks! https://stackoverflow.com/a/46697247/2421121
+     * @param string $dir
+     * @return array
+     */
+    private function scanDirectoryRecursive(string $dir): array
     {
         $result = [];
-        foreach(scandir($dir) as $filename) {
+        foreach (scandir($dir) as $filename) {
             if ($filename[0] === '.') continue;
             $filePath = $dir . '/' . $filename;
             if (is_dir($filePath)) {
@@ -97,5 +155,17 @@ class TemplateTranslationService extends BaseSpreadsheetService
             }
         }
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    private function getAllSupportedTemplateExtensions(): array
+    {
+        $result = [];
+        foreach (self::DELIMITERS as $delimiter) {
+            $result = array_merge($result, $delimiter['fileExtensions']);
+        }
+        return array_unique($result);
     }
 }
