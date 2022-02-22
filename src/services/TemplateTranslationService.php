@@ -38,12 +38,12 @@ class TemplateTranslationService extends BaseSpreadsheetService
 
         $result = [];
 
-        foreach ($templatesDirectories as $directoryPath) {          
+        foreach ($templatesDirectories as $directoryPath) {
           \Craft::$app->view->setTemplatesPath($directoryPath);
           $templatePaths = $this->getTemplatePaths($directoryPath);
 
           foreach ($templatePaths as $templatePath) {
-              $translations = $this->getTranslationsFromTemplateFile($directoryPath . "/" . $templatePath);
+              $translations = $this->getTranslationsFromTemplateFile($templatePath);
               $result = array_merge($result, $translations);
           }
         }
@@ -74,6 +74,7 @@ class TemplateTranslationService extends BaseSpreadsheetService
             }
             $result = array_merge($result, $extractionResult);
         }
+        
         return $result;
     }
 
@@ -103,7 +104,8 @@ class TemplateTranslationService extends BaseSpreadsheetService
      */
     private function getTranslationsFromPlainTemplateFile(string $translationPath, string $delimiterStart, string $delimiterEnd): array
     {
-        $document = file_get_contents($translationPath);
+        $templatesPath = \Craft::$app->view->getTemplatesPath();
+        $document = file_get_contents($templatesPath . '/' . $translationPath);
         return $this->extractTranslationsFromDocument($document, $delimiterStart, $delimiterEnd);
     }
 
