@@ -63,6 +63,22 @@
     placeholder: 'Spreadsheet Translations'
 }) }}
 
+{{ forms.editableTableField({
+    label: "Template Directories",
+    instructions: 'Which directories should be scanned for translations.',
+    name: 'templateDirectories',
+    id: 'templateDirectories',
+    cols: {
+      directoryPath: {
+          type: 'singleline',
+          heading: 'Directory Path',
+          placeholder: "templates",
+      }
+    },
+    rows: settings['templateDirectories'],
+    addRowLabel: "Add a template directory",
+}) }}
+
 <div class="btn js-test-config-button">{{ 'Test credentials' | t('spreadsheet-translations') }}</div>
 <span id="graphic" class="spinner hidden js-test-config-spinner"></span>
 <p class="js-test-config-result"></p>

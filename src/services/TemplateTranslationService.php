@@ -34,18 +34,25 @@ class TemplateTranslationService extends BaseSpreadsheetService
     public function getTranslationsFromTemplates(): array
     {
         $originalTemplatesPath = \Craft::$app->view->getTemplatesPath();
-        $templatesPath = $this->templatesPath();
-        \Craft::$app->view->setTemplatesPath($templatesPath);
-        $templatePaths = $this->getTemplatePaths();
+        $templatesDirectories = $this->templateDirectories();
+
         $result = [];
-        foreach ($templatePaths as $templatePath) {
-            $translations = $this->getTranslationsFromTemplateFile($templatePath);
-            $result = array_merge($result, $translations);
+
+        foreach ($templatesDirectories as $directoryPath) {          
+          \Craft::$app->view->setTemplatesPath($directoryPath);
+          $templatePaths = $this->getTemplatePaths($directoryPath);
+
+          foreach ($templatePaths as $templatePath) {
+              $translations = $this->getTranslationsFromTemplateFile($directoryPath . "/" . $templatePath);
+              $result = array_merge($result, $translations);
+          }
         }
+
         \Craft::$app->view->setTemplatesPath($originalTemplatesPath);
 
         $result = array_unique($result);
         natcasesort($result);
+
         return $result;
     }
 
@@ -96,7 +103,6 @@ class TemplateTranslationService extends BaseSpreadsheetService
      */
     private function getTranslationsFromPlainTemplateFile(string $translationPath, string $delimiterStart, string $delimiterEnd): array
     {
-        $translationPath = $this->templatesPath() . $translationPath;
         $document = file_get_contents($translationPath);
         return $this->extractTranslationsFromDocument($document, $delimiterStart, $delimiterEnd);
     }
@@ -120,15 +126,14 @@ class TemplateTranslationService extends BaseSpreadsheetService
      * Returns all template file paths relative to the `templates/` folder.
      * @return array
      */
-    private function getTemplatePaths(): array
+    private function getTemplatePaths($templatesPath): array
     {
-        $templatesPath = $this->templatesPath();
         $result = $this->scanDirectoryRecursive($templatesPath);
         $result = array_filter($result, function ($item) {
             $extension = pathInfo($item, PATHINFO_EXTENSION);
             return in_array($extension, $this->getAllSupportedTemplateExtensions());
         });
-        $result = array_map(function($item) use ($templatesPath) {
+        $result = array_map(function($item) {
             $info = pathInfo($item);
             return $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '.' . $info['extension'];
         }, $result);

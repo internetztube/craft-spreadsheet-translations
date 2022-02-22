@@ -52,14 +52,20 @@ abstract class BaseSpreadsheetService extends Component
     }
 
     /**
-     * Directory where the templates are located.
-     * @return string
+     * Directories where the templates are located.
+     * @return array
      */
-    public function templatesPath(): string
+    public function templateDirectories(): array
     {
         $basePath = \Craft::$app->config->getConfigFilePath('../yo');
         $basePath = realpath(dirname($basePath));
-        return $basePath . '/templates/';
+        $directories = [];
+
+        foreach (SpreadsheetTranslations::$plugin->getSettings()->templateDirectories as $directory) {
+          $directories[] = $basePath . '/' . $directory['directoryPath'];
+        }
+
+        return $directories;
     }
 
     /**
