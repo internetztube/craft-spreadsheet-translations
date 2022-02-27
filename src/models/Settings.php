@@ -15,6 +15,7 @@ class Settings extends Model
     public $sheetContentTabName = '';
     public $slugifyContentTabName = true;
     public $sidebarName = 'Spreadsheet Translations';
+    public $templateDirectories = [[ 'directoryPath' => 'templates' ]];
 
     public function rules()
     {
@@ -23,6 +24,7 @@ class Settings extends Model
             ['spreadSheetId', 'required'],
             ['sheetContentTabName', 'required'],
             ['sidebarName', 'required'],
+            ['templateDirectories', 'required'],
         ];
     }
 }
