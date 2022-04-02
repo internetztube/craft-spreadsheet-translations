@@ -19,7 +19,7 @@ use Craft;
  * @package   SpreadsheetTranslations
  * @since     1.0.0
  */
-class SpreadsheetTranslationsTwigExtension extends \Twig_Extension
+class SpreadsheetTranslationsTwigExtension extends \Twig\Extension\AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -35,7 +35,7 @@ class SpreadsheetTranslationsTwigExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('t', [$this, 'translateFilter']),
+            new \Twig\TwigFilter('t', [$this, 'translateFilter']),
         ];
     }
 

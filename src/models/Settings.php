@@ -17,7 +17,7 @@ class Settings extends Model
     public $sidebarName = 'Spreadsheet Translations';
     public $templateDirectories = [[ 'directoryPath' => 'templates' ]];
 
-    public function rules()
+    public function rules(): array
     {
         return [
             ['keyFileContents', 'required'],

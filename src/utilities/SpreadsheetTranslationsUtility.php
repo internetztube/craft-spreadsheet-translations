@@ -18,7 +18,7 @@ class SpreadsheetTranslationsUtility extends Utility
         return 'spreadsheet-translations';
     }
 
-    public static function iconPath()
+    public static function iconPath(): ?string
     {
         return Craft::getAlias("@internetztube/spreadsheetTranslations/icon-mask.svg");
     }

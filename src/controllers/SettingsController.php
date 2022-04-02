@@ -7,7 +7,7 @@ use internetztube\spreadsheetTranslations\SpreadsheetTranslations;
 
 class SettingsController extends Controller
 {
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.0-beta.1 - 2022-04-02
+### Added
+- Added support for [Craft CMS 4.0.0-beta.3](https://github.com/craftcms/cms/releases/tag/4.0.0-beta.3).
+
 # 1.1.5 - 2022-02-28
 ### Added
 - Added support for multiple template directories. Thanks to [@JamesNuttall](https://github.com/JamesNuttall). [#24](https://github.com/internetztube/craft-spreadsheet-translations/pull/24) 
